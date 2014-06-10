@@ -6,11 +6,15 @@ Interpreter::Interpreter():
 
 
 void Interpreter::next() {
-	++m_current;
+	if (++m_current > MAX_MEMORY) {
+    printf("Memory overflow\n");
+  }
 }
 
 void Interpreter::prev() {
-	--m_current;
+	if (--m_current < 0) {
+    printf("Memory underflow\n");
+  }
 }
 
 void Interpreter::add() {
@@ -32,15 +36,13 @@ void Interpreter::get() {
 void Interpreter::forward_jump(std::string const& source) {
 	if (m_memory[m_current] == 0) {
     int depth = 0;
-    while (m_source_position < (source.size() - 1)) {
-      ++m_source_position;
+    while (m_source_position++ < (source.size() - 1)) {
       char current_char = source[m_source_position];
       if (current_char == '[') {
         ++depth;
       } else if (current_char == ']') {
         if (depth == 0) {
-          ++m_source_position;
-          break;
+          return;
         }
         --depth;
       }
@@ -51,14 +53,13 @@ void Interpreter::forward_jump(std::string const& source) {
 void Interpreter::backward_jump(std::string const& source) {
 	if (m_memory[m_current] != 0) {
     int depth = 0;
-		while (m_source_position > 0) {
-      --m_source_position;
+		while (m_source_position-- > 0) {
       char current_char = source[m_source_position];
       if (current_char == ']') {
         ++depth;
       } else if (current_char == '[') {
         if (depth == 0) {
-          break;
+          return;
         }
         --depth;
       }
@@ -68,7 +69,10 @@ void Interpreter::backward_jump(std::string const& source) {
 
 void Interpreter::handle_char(std::string const& source) {
 	char symbol = source[m_source_position];
-	switch (symbol) {
+#ifdef DEBUG
+  printf("%lu %c\n", m_source_position, source[m_source_position]);
+#endif
+  switch (symbol) {
 		case '>':
 			next();
 			break;

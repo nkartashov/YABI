@@ -1,5 +1,6 @@
 #ifndef INTERPRETER_H_
 #define INTERPRETER_H_
+#define DEBUG0
 
 #include <string>
 
@@ -24,7 +25,7 @@ class Interpreter {
 		void handle_char(std::string const& source);
 
 		char m_memory[MAX_MEMORY];
-		size_t m_current;
+		int m_current;
 		size_t m_source_position;
 
 };
