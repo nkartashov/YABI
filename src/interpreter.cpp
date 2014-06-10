@@ -31,13 +31,38 @@ void Interpreter::get() {
 
 void Interpreter::forward_jump(std::string const& source) {
 	if (m_memory[m_current] == 0) {
-		while(source[m_source_position++] != ']') {}
+    int depth = 0;
+    while (m_source_position < (source.size() - 1)) {
+      ++m_source_position;
+      char current_char = source[m_source_position];
+      if (current_char == '[') {
+        ++depth;
+      } else if (current_char == ']') {
+        if (depth == 0) {
+          ++m_source_position;
+          break;
+        }
+        --depth;
+      }
+    }
 	}
 }
 
 void Interpreter::backward_jump(std::string const& source) {
 	if (m_memory[m_current] != 0) {
-		while (source[--m_source_position] != '[') {}
+    int depth = 0;
+		while (m_source_position > 0) {
+      --m_source_position;
+      char current_char = source[m_source_position];
+      if (current_char == ']') {
+        ++depth;
+      } else if (current_char == '[') {
+        if (depth == 0) {
+          break;
+        }
+        --depth;
+      }
+    }
 	}
 }
 
